@@ -1,0 +1,100 @@
+<html>
+<head>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.0/jquery.min.js"></script>
+	<script>
+		var WordnikAPIKey = '55b33f5d38683644f40ac12b8ed0e2c191bad85a750d8cb1f';
+		var FiveHundredAPIKey = 'xX0DZZFlO7nKB3PKjs4ccxFDZLCNUQyB7vWX5KIx';
+		var GoogleMapAPIKey = 'AIzaSyAP7q4HAdVXkLp3RmWaTLUB-kR5_vRTW3U';
+		var GoogleAPIKey = 'AIzaSyCdomRCjumi0_qDaFEH0c62ESUGMHRiR48';
+		function getCityName() {
+			console.log('retrieving city name');
+			var start = Math.floor(Math.random()*300);
+			$.ajax({
+				url: "http://api.wordnik.com:80/v4/words.json/reverseDictionary?query=city&minCorpusCount=100&maxCorpusCount=-1&minLength=1&maxLength=-1&includeTags=false&skip=" + start + "&limit=1&api_key=" + WordnikAPIKey,
+				success: function(data) {
+					console.log(data);
+					var word = data['results']['0']['word'];
+					var text = data['results']['0']['text'];
+					console.log(word + "*" + text);
+					$('#1').html(word + text);
+					findDetails(word);
+				}
+			})
+
+		}
+		function findDetails(word) {
+			console.log('finding details for ' + word);
+			$.ajax({
+				url: "https://cors-anywhere.herokuapp.com/https://en.wikivoyage.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=" + word,
+				success: function(data) {
+					console.log(data);
+					var def = data.query.pages;
+					var index = Object.keys(def)[0];
+					var check = 'There is more than one place called';
+					console.log(def);
+					console.log(index);
+					var text = def[index]['extract'];
+					if (text === undefined || String(text).substring(0,check.length) == check) {
+						console.log('Multiple definitions or definition not found for ' + word);
+						getCityName();
+					} else {
+						console.log(String(text).length);
+						if (String(text).length < 250) {
+							console.log('Description for ' + word + ' is too short');
+							getCityName();
+						} else {
+							console.log(text);
+							$('#2').html(text);
+							findphotos(word);
+							placeMap(word);
+							findVideo(word);
+						}
+					}
+				}
+			})
+		}
+		function findphotos(keyword) {
+			$.ajax({
+			//url: "https://api.500px.com/v1/photos/search?term=" + keyword + "&tag=" + keyword + "&exclude_nude=1&only=travel&consumer_key=" + FiveHundredAPIKey,
+			url: "https://api.500px.com/v1/photos/search?term=" + keyword + "&exclude_nude=1&only=travel&consumer_key=" + FiveHundredAPIKey,
+			success: function(data) {
+				console.log(data);
+				var pic1 = data.photos['0'].image_url;
+				console.log(pic1);
+				//$('#2').html(data);
+				$('#img').attr('src', pic1);
+			}
+			})
+		}
+		function placeMap(location) {
+			console.log('placing iframe of google maps for ' + location);
+			var iframe = '<iframe width="600" height="450" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key=' + GoogleMapAPIKey + '&q=' + location + '" allowfullscreen></iframe>';
+			$('#4').html(iframe);
+		}
+		function findVideo(keyword) {
+			console.log('Searching for a video ' + keyword);
+			$.ajax({
+				url: 'https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=' + keyword + '&topicId=%2Fm%2F07bxq&key=' + GoogleAPIKey,
+				success: function(data) {
+					console.log(data);
+					var vidid = data['items']['0']['id']['videoId'];
+					addVideo(vidid);
+				}
+			})
+		}
+		function addVideo(vidid) {
+			console.log('attempting to embed video ' + vidid);
+			var iframe = '<iframe id="ytplayer" type="text/html" width="640" height="360" src="https://www.youtube.com/embed/' + vidid + '?autoplay=1&origin=http://example.com" frameborder="0"></iframe>';
+			$('#5').html(iframe);
+		}
+	window.onload = getCityName();
+</script>
+</head>
+<body>
+	<div id="1"></div>
+	<div id="2"></div>
+	<div id="3"><img id="img" src=""></div>
+	<div id="4"></div>
+	<div id="5"></div>
+</body>
+</html>
