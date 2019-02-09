@@ -34,7 +34,7 @@
       console.log('retrieving city name');
       var start = Math.floor(Math.random()*300);
       $.ajax({
-        url: "http://api.wordnik.com:80/v4/words.json/reverseDictionary?query=city&minCorpusCount=100&maxCorpusCount=-1&minLength=1&maxLength=-1&includeTags=false&skip=" + start + "&limit=1&api_key=" + WordnikAPIKey,
+        url: "https://api.wordnik.com:80/v4/words.json/reverseDictionary?query=city&minCorpusCount=100&maxCorpusCount=-1&minLength=1&maxLength=-1&includeTags=false&skip=" + start + "&limit=1&api_key=" + WordnikAPIKey,
         success: function(data) {
           console.log(data);
           var word = data['results']['0']['word'];
