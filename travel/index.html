@@ -6,7 +6,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="Let your adventure begin.">
-  <meta name="author" content="Jhillika Kumar & Huan.">
+  <meta name="author" content="Jhillika Kumar.">
 
   <title>Wanderlust's Bible</title>
 
@@ -17,6 +17,7 @@
   <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
   <link href='https://fonts.googleapis.com/css?family=Cabin:700' rel='stylesheet' type='text/css'>
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
@@ -27,9 +28,11 @@
     var WordnikAPIKey = '55b33f5d38683644f40ac12b8ed0e2c191bad85a750d8cb1f';
     var FiveHundredAPIKey = 'xX0DZZFlO7nKB3PKjs4ccxFDZLCNUQyB7vWX5KIx';
     var GoogleMapAPIKey = 'AIzaSyAP7q4HAdVXkLp3RmWaTLUB-kR5_vRTW3U';
-    var GoogleAPIKey = 'AIzaSyCdomRCjumi0_qDaFEH0c62ESUGMHRiR48';
+    var GoogleAPIKey = 'AIzaSyA-dJTuibMvQznWAJh4bcSkHFH52Tm_lAg'; //gotta change youtube api here
     var geonamesusername = 'jhillika';
     var cors = "https://cors-anywhere.herokuapp.com/";
+
+  <!--get a city name randomly-->
     function getCityName() {
       console.log('retrieving city name');
       var start = Math.floor(Math.random()*300);
@@ -46,6 +49,8 @@
       })
 
     }
+
+    <!--API from wiki-->
     function findDetails(word) {
       console.log('finding details for ' + word);
       $.ajax({
@@ -75,12 +80,15 @@
               $('#description').append(text);
               findphotos(word);
               placeMap(word);
+              findVideo(word);
               searchcity(word);
             }
           }
         }
       })
     }
+
+
     function findphotos(keyword) {
       console.log('finding photos for ' + keyword);
       $.ajax({
@@ -110,11 +118,30 @@
       $('#map').append(iframe);
     }
 
+    <!--Youtube API-->
+    function findVideo(keyword) {
+      console.log('Searching for a video ' + keyword);
+      $.ajax({
+        url: 'https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=' + keyword + '&topicId=%2Fm%2F07bxq&key=' + GoogleAPIKey,
+        success: function(data) {
+          console.log(data);
+          var vidid = data['items']['0']['id']['videoId'];
+          addVideo(vidid);
+        }
+      })
+    }
+    function addVideo(vidid) {
+      console.log('attempting to embed video ' + vidid);
+      var iframe = '<iframe id="ytplayer" type="text/html" width="640" height="360" src="https://www.youtube.com/embed/' + vidid + '" frameborder="0"></iframe>';
+      //var videourl = src='https://www.youtube.com/embed/' + vidid;
+      $('#video').html('');
+      $('#video').append(iframe);
+    }
 
     function searchcity(city) {
       console.log('searching geonames for ' + city);
       $.ajax({
-        url: 'http://api.geonames.org/search?q=' + city + '&maxRows=1&type=json&username=' + geonamesusername,
+        url: 'https://api.geonames.org/search?q=' + city + '&maxRows=1&type=json&username=' + geonamesusername,
         success: function(data) {
           console.log(data);
           var countryname = data.geonames[0].countryName;
@@ -125,7 +152,32 @@
         }
       });
     }
-
+    function searchbycountry(country) {
+      console.log('searching for details about ' + country);
+      $.ajax({
+        url: 'https://restcountries.eu/rest/v2/alpha?codes=' + country,
+        success: function(data) {
+          console.log(data);
+          var currencyname = data[0].currencies[0].name;
+          var currencysymbol = data[0].currencies[0].symbol;
+          var languagename = data[0].languages[0].name;
+          var iso639_1 = data[0].languages[0].iso639_1;
+          var iso639_2 = data[0].languages[0].iso639_2;
+          var nativename = data[0].languages[0].nativeName;
+          var countrypopulation = data[0].population;
+          var timezone = data[0].timezones[0];
+          $('#currency').html('');
+          $('#currency').append(currencyname + " - " + currencysymbol);
+          $('#language').html('');
+          $('#language2').html('');
+          $('#language').append(languagename);
+          if (languagename != nativename) {
+            $('#language2').append(nativename);
+          }
+          
+        }
+      })
+    }
     window.onload = getCityName();
   </script>
 </head>
@@ -140,7 +192,22 @@
       Menu
       <i class="fa fa-bars"></i>
     </button>
-
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="#jhillika">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="#jhillika2">Video Tour</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="#jhillika3">Details</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="#jhillika4">Location</a>
+        </li>
+      </ul>
+    </div>
   </div>
 </nav>
 
@@ -182,10 +249,67 @@
       <div> <!-- End Container -->
       </section>
 
+      <!-- Download Section -->
+      <section id="download" class="download-section content-section text-center">
+        <div class="container">
 
+          <div class="row">
+            <div class="col-lg-12 mx-auto">
+              <div id="jhillika2"><br> <br></div> 
+              <h2>Video Tour</h2>
+              <br>
+            </div> <!-- End Column -->
+          </div><!-- End Row -->
 
+          <div class="row">
+            <div id="video" class="offset-lg-1 col-lg-10">
 
-  <!-- Map Section -->
+              <iframe width="100%" height="450" src="https://www.youtube.com/embed/Oo6iAxf4si0?rel=0&amp;showinfo=0&amp;start=23" frameborder="0" allowfullscreen></iframe>
+
+            </div> 
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact Section -->
+      <section id="contact" class="content-section text-center">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8 mx-auto">
+              <div id="jhillika3"><br> <br>
+              </div> 
+              <h2>Details</h2> <br>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <h5>Country</h5>
+              <i class="fa fa-map-marker fa-4x animated"></i>
+              <br><br>
+              <p id="country">United States</p>
+            </div> 
+            <div class="col-lg-4">
+              <h5>Currency</h5>
+              <i class="fa fa-money fa-4x animated"></i>
+              <br><br>
+              <p id="currency">Dollar $</p>
+            </div> 
+
+            <div class="col-lg-4">
+              <h5>Language</h5>
+              <i class="fa fa-comments-o fa-4x animated"></i>
+              <br><br>
+              <p id="language">English</p>
+              <p id="language2"></p>
+            </div> 
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Map Section -->
     <section id="mapArea" style="background: rgb(77, 77, 77);" class="content-section text-center">
       <div class="container">
 
@@ -209,7 +333,7 @@
     <!-- Footer -->
     <footer>
       <div class="container text-center">
-        <p>Produced by DJ Designers</p>
+        <p>An LMC 2700 Production</p>
       </div>
     </footer>
 
@@ -220,7 +344,7 @@
     <!-- Plugin JavaScript -->
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
-    <!-- Google Maps API Key -->
+    <!-- Google Maps API Key - Use your own API key to enable the map feature. More information on the Google Maps API can be found at https://developers.google.com/maps/ -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRngKslUGJTlibkQ3FkfTxj3Xss1UlZDA&sensor=false"></script>
 
     <!-- Custom scripts for this template -->
