@@ -1,0 +1,102 @@
+<html>
+<!-- Requirement 5: Must be live
+This website be accessed via the following URL:
+*****************************
+
+*****************************
+-->
+
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/themes/base/jquery-ui.css" type="text/css" media="all" />
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.5.min.js" type="text/javascript"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js" type="text/javascript"></script>
+    <meta name="description" content="An interactive getting started guide for Brackets.">
+    <script src="simulation.js"></script>
+    <style>
+        /*  Requirement 2: Typography
+I used css to control the hierarchy of the typography.
+H1 is for title. 
+Class ".para" is for most of the words.
+*/
+        body {background-color: #F8F5D8;}
+
+        h1 {
+            text-align: center;
+            font-size: 40px;
+            font-family: Fantasy;
+            margin: 30px;
+            color: #362D27;
+            padding-top: 60px;
+        }
+
+        img {
+            width: 580px;
+            height: 400px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 20px;
+        }
+
+        #health {
+            text-align: center;
+            font-size: 14px;
+            font-family: Verdana;
+        }
+
+        #time {
+            text-align: center;
+            font-size: 14px;
+            font-family: Verdana;
+        }
+
+        .para {
+            width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 30px;
+            font-size: 16px;
+            font-family: Monospace;
+        }
+
+        .button {
+            background-color: #362D27;
+            width: 300px;
+            margin: 0 auto;
+            margin-top: 10px;
+            padding: 5px;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        a {
+            color: white;
+            font-size: 14px;
+            font-family: Verdana;
+            text-decoration: none
+        }
+
+    </style>
+</head>
+
+<body>
+    <h1>Three Days on an Island</h1>
+    <!--  Requirement 3: Image
+    -->
+    <img src="isolated1.jpg" id="picture" alt="Illustration" align="center" />
+    <!-- Section to show visible parameters -->
+    <p id="health" align="center"> </p>
+    <p id="time" align="center"> </p>
+
+    <!-- Section to show feedback based on choices -->
+    <div class="para" id="feedback"></div>
+    <!-- Section to show narratives -->
+    <div class="para" id="story" align="left">An airplane crashed onto an isolated island. You have no idea where you are. If you do not eat or drink for 72 hours, you will die. Now you have three days to explore this place. Can you survive? Can you meet with anything exciting?</div>
+    <!-- Button(s) for choices -->
+    <div id="selection">
+        <div class="button" id="start"><a href="#">Start</a></div>
+    </div>
+</body>
